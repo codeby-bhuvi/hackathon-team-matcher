@@ -32,6 +32,7 @@ model User {
   hackathons   Hackathon[]
   ledTeams     Team[]       @relation("TeamLeader")
   memberships  TeamMember[]
+  soloEntries  SoloEntry[]
 }
 
 enum Mode {
@@ -59,6 +60,7 @@ model Hackathon {
   postedBy    User     @relation(fields: [postedById], references: [id])
   teams        Team[]
   teamMembers  TeamMember[]
+  soloEntries  SoloEntry[]
 }
 
 model Team {
@@ -79,6 +81,18 @@ model TeamMember {
   joinedAt    DateTime  @default(now())
   teamId      Int
   team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  hackathonId Int
+  hackathon   Hackathon @relation(fields: [hackathonId], references: [id])
+
+  @@unique([userId, hackathonId])
+}
+
+model SoloEntry {
+  id          Int       @id @default(autoincrement())
+  note        String?
+  createdAt   DateTime  @default(now())
   userId      Int
   user        User      @relation(fields: [userId], references: [id])
   hackathonId Int
