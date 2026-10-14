@@ -108,4 +108,22 @@ router.get("/", requireAuth, async (req, res) => {
   res.json(hackathons);
 });
 
+router.get("/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: "Invalid hackathon id" });
+  }
+
+  const hackathon = await prisma.hackathon.findUnique({
+    where: { id },
+    include: { postedBy: { select: { id: true, name: true } } },
+  });
+
+  if (!hackathon || (hackathon.hidden && req.user.role !== "ADMIN")) {
+    return res.status(404).json({ error: "Hackathon not found" });
+  }
+
+  res.json(hackathon);
+});
+
 module.exports = router;
