@@ -73,4 +73,34 @@ router.post("/", requireAuth, async (req, res) => {
   res.status(201).json(team);
 });
 
+router.get("/", requireAuth, async (req, res) => {
+  const hId = Number(req.query.hackathonId);
+  if (!Number.isInteger(hId)) {
+    return res.status(400).json({ error: "A valid hackathonId is required" });
+  }
+
+  const hackathon = await prisma.hackathon.findUnique({ where: { id: hId } });
+  if (!hackathon || (hackathon.hidden && req.user.role !== "ADMIN")) {
+    return res.status(404).json({ error: "Hackathon not found" });
+  }
+
+  const where = { hackathonId: hId };
+  if (req.query.includeFull !== "true") {
+    where.spotsNeeded = { gt: 0 };
+  }
+
+  const teams = await prisma.team.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    include: {
+      leader: { select: { id: true, name: true } },
+      members: {
+        include: { user: { select: { id: true, name: true } } },
+      },
+    },
+  });
+
+  res.json(teams);
+});
+
 module.exports = router;
