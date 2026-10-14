@@ -1,9 +1,10 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const prisma = require("../db");
+const jwt = require("jsonwebtoken");
+const { requireAuth } = require("../middleware/auth");
 
 const router = express.Router();
-const jwt = require("jsonwebtoken");
 
 router.post("/signup", async (req, res) => {
   const { name, email, password, city, college, skills } = req.body;
@@ -91,6 +92,28 @@ router.post("/login", async (req, res) => {
       role: user.role,
     },
   });
+});
+
+router.get("/me", requireAuth, async (req, res) => {
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      city: true,
+      college: true,
+      bio: true,
+      skills: true,
+      role: true,
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  res.json(user);
 });
 
 module.exports = router;
