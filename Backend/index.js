@@ -5,6 +5,7 @@ app.use(express.json());
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/users", require("./routes/users"));
+app.use("/api/hackathons", require("./routes/hackathons"));
 
 app.get("/", (req, res) => {
   res.send("Hackathon Team Matcher API is running");

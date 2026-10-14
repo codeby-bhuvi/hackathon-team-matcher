@@ -29,4 +29,30 @@ model User {
   skills       String[]
   role         Role     @default(USER)
   createdAt    DateTime @default(now())
+  hackathons   Hackathon[]
+}
+
+enum Mode {
+  ONLINE
+  IN_PERSON
+  HYBRID
+}
+
+model Hackathon {
+  id          Int      @id @default(autoincrement())
+  name        String
+  organizer   String
+  description String?
+  link        String
+  mode        Mode
+  city        String?
+  startDate   DateTime
+  endDate     DateTime
+  deadline    DateTime
+  minTeamSize Int
+  maxTeamSize Int
+  hidden      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  postedById  Int
+  postedBy    User     @relation(fields: [postedById], references: [id])
 }
