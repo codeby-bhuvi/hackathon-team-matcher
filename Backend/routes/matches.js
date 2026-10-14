@@ -57,4 +57,57 @@ router.get("/teams", requireAuth, async (req, res) => {
   res.json(ranked);
 });
 
+router.get("/solo", requireAuth, async (req, res) => {
+  const teamId = Number(req.query.teamId);
+  if (!Number.isInteger(teamId)) {
+    return res.status(400).json({ error: "A valid teamId is required" });
+  }
+
+  const team = await prisma.team.findUnique({
+    where: { id: teamId },
+    include: { leader: { select: { city: true, college: true } } },
+  });
+  if (!team) {
+    return res.status(404).json({ error: "Team not found" });
+  }
+  if (team.leaderId !== req.user.id) {
+    return res
+      .status(403)
+      .json({ error: "Only the team leader can see matches for this team" });
+  }
+
+  const taken = await prisma.teamMember.findMany({
+    where: { hackathonId: team.hackathonId },
+    select: { userId: true },
+  });
+
+  const entries = await prisma.soloEntry.findMany({
+    where: {
+      hackathonId: team.hackathonId,
+      userId: { notIn: taken.map((t) => t.userId) },
+    },
+    include: {
+      user: {
+        select: { id: true, name: true, city: true, college: true, skills: true },
+      },
+    },
+  });
+
+  const ranked = entries
+    .map((entry) => {
+      const { score, matchedSkills } = scoreMatch({
+        skills: entry.user.skills,
+        needed: team.skillsNeeded,
+        city: entry.user.city,
+        otherCity: team.leader.city,
+        college: entry.user.college,
+        otherCollege: team.leader.college,
+      });
+      return { ...entry, score, matchedSkills };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  res.json(ranked);
+});
+
 module.exports = router;
