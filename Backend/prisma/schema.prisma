@@ -36,6 +36,8 @@ model User {
   requestsAbout Request[] @relation("RequestAbout")
   requestsSent  Request[] @relation("RequestSender")
   reports      Report[]
+  pastHackathons PastHackathon[]
+  projects       Project[]
 }
 
 enum Mode {
@@ -141,4 +143,22 @@ model Report {
   user        User      @relation(fields: [userId], references: [id])
 
   @@unique([userId, hackathonId])
+}
+
+model PastHackathon {
+  id     Int     @id @default(autoincrement())
+  name   String
+  year   Int
+  result String?
+  userId Int
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  link        String?
+  userId      Int
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -106,6 +106,14 @@ router.get("/me", requireAuth, async (req, res) => {
       bio: true,
       skills: true,
       role: true,
+        contact: true,
+        pastHackathons: {
+        select: { id: true, name: true, year: true, result: true },
+        orderBy: { year: "desc" },
+      },
+        projects: {
+        select: { id: true, title: true, description: true, link: true },
+      },
     },
   });
 

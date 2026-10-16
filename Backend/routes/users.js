@@ -70,6 +70,13 @@ router.get("/:id", requireAuth, async (req, res) => {
       skills: true,
       role: true,
       createdAt: true,
+        pastHackathons: {
+        select: { id: true, name: true, year: true, result: true },
+        orderBy: { year: "desc" },
+      },
+      projects: {
+        select: { id: true, title: true, description: true, link: true },
+      },
     },
   });
 
@@ -78,6 +85,98 @@ router.get("/:id", requireAuth, async (req, res) => {
   }
 
   res.json(user);
+});
+
+router.post("/me/past-hackathons", requireAuth, async (req, res) => {
+  const { name, year, result } = req.body;
+
+  if (!name || !String(name).trim()) {
+    return res.status(400).json({ error: "Hackathon name is required" });
+  }
+  const y = Number(year);
+  const maxYear = new Date().getFullYear() + 1;
+  if (!Number.isInteger(y) || y < 2000 || y > maxYear) {
+    return res.status(400).json({ error: "Please enter a valid year" });
+  }
+
+  const count = await prisma.pastHackathon.count({
+    where: { userId: req.user.id },
+  });
+  if (count >= 20) {
+    return res.status(400).json({ error: "You can add at most 20 past hackathons" });
+  }
+
+  const entry = await prisma.pastHackathon.create({
+    data: {
+      name: String(name).trim(),
+      year: y,
+      result: result ? String(result).trim() : null,
+      userId: req.user.id,
+    },
+  });
+
+  res.status(201).json(entry);
+});
+
+router.delete("/me/past-hackathons/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: "Invalid id" });
+  }
+
+  const removed = await prisma.pastHackathon.deleteMany({
+    where: { id, userId: req.user.id },
+  });
+  if (removed.count === 0) {
+    return res.status(404).json({ error: "Entry not found" });
+  }
+
+  res.json({ message: "Removed" });
+});
+
+router.post("/me/projects", requireAuth, async (req, res) => {
+  const { title, description, link } = req.body;
+
+  if (!title || !String(title).trim()) {
+    return res.status(400).json({ error: "Project title is required" });
+  }
+  if (link && !/^https?:\/\//i.test(String(link))) {
+    return res
+      .status(400)
+      .json({ error: "Link must start with http:// or https://" });
+  }
+
+  const count = await prisma.project.count({ where: { userId: req.user.id } });
+  if (count >= 20) {
+    return res.status(400).json({ error: "You can add at most 20 projects" });
+  }
+
+  const project = await prisma.project.create({
+    data: {
+      title: String(title).trim(),
+      description: description ? String(description).trim() : null,
+      link: link ? String(link).trim() : null,
+      userId: req.user.id,
+    },
+  });
+
+  res.status(201).json(project);
+});
+
+router.delete("/me/projects/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: "Invalid id" });
+  }
+
+  const removed = await prisma.project.deleteMany({
+    where: { id, userId: req.user.id },
+  });
+  if (removed.count === 0) {
+    return res.status(404).json({ error: "Entry not found" });
+  }
+
+  res.json({ message: "Removed" });
 });
 
 module.exports = router;
