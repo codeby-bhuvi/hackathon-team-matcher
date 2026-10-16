@@ -126,4 +126,41 @@ router.get("/:id", requireAuth, async (req, res) => {
   res.json(hackathon);
 });
 
+router.post("/:id/report", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: "Invalid hackathon id" });
+  }
+
+  const hackathon = await prisma.hackathon.findUnique({ where: { id } });
+  if (!hackathon || hackathon.hidden) {
+    return res.status(404).json({ error: "Hackathon not found" });
+  }
+  if (hackathon.postedById === req.user.id) {
+    return res.status(400).json({ error: "You cannot report your own post" });
+  }
+
+  const reason = req.body.reason ? String(req.body.reason).trim() : null;
+
+  try {
+    await prisma.report.create({
+      data: { hackathonId: id, userId: req.user.id, reason },
+    });
+  } catch (err) {
+    if (err.code === "P2002") {
+      return res.status(409).json({ error: "You already reported this post" });
+    }
+    throw err;
+  }
+
+  const threshold = Number(process.env.REPORT_THRESHOLD) || 10;
+  const count = await prisma.report.count({ where: { hackathonId: id } });
+
+  if (count >= threshold) {
+    await prisma.hackathon.update({ where: { id }, data: { hidden: true } });
+  }
+
+  res.status(201).json({ message: "Report received" });
+});
+
 module.exports = router;

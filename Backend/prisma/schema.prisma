@@ -35,6 +35,7 @@ model User {
   soloEntries  SoloEntry[]
   requestsAbout Request[] @relation("RequestAbout")
   requestsSent  Request[] @relation("RequestSender")
+  reports      Report[]
 }
 
 enum Mode {
@@ -63,6 +64,7 @@ model Hackathon {
   teams        Team[]
   teamMembers  TeamMember[]
   soloEntries  SoloEntry[]
+  reports      Report[]
 }
 
 model Team {
@@ -127,4 +129,16 @@ model Request {
   user      User          @relation("RequestAbout", fields: [userId], references: [id])
   senderId  Int
   sender    User          @relation("RequestSender", fields: [senderId], references: [id])
+}
+
+model Report {
+  id          Int       @id @default(autoincrement())
+  reason      String?
+  createdAt   DateTime  @default(now())
+  hackathonId Int
+  hackathon   Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, hackathonId])
 }
