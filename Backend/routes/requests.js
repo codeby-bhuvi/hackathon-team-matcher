@@ -105,4 +105,31 @@ router.post("/", requireAuth, async (req, res) => {
   res.status(201).json(request);
 });
 
+router.get("/", requireAuth, async (req, res) => {
+  const include = {
+    team: { select: { id: true, name: true, hackathonId: true } },
+    user: { select: { id: true, name: true } },
+    sender: { select: { id: true, name: true } },
+  };
+
+  const received = await prisma.request.findMany({
+    where: {
+      OR: [
+        { type: "JOIN", team: { leaderId: req.user.id } },
+        { type: "INVITE", userId: req.user.id },
+      ],
+    },
+    orderBy: { createdAt: "desc" },
+    include,
+  });
+
+  const sent = await prisma.request.findMany({
+    where: { senderId: req.user.id },
+    orderBy: { createdAt: "desc" },
+    include,
+  });
+
+  res.json({ received, sent });
+});
+
 module.exports = router;
