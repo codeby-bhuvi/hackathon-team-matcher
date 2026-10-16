@@ -33,6 +33,8 @@ model User {
   ledTeams     Team[]       @relation("TeamLeader")
   memberships  TeamMember[]
   soloEntries  SoloEntry[]
+  requestsAbout Request[] @relation("RequestAbout")
+  requestsSent  Request[] @relation("RequestSender")
 }
 
 enum Mode {
@@ -74,6 +76,7 @@ model Team {
   leaderId     Int
   leader       User         @relation("TeamLeader", fields: [leaderId], references: [id])
   members      TeamMember[]
+  requests     Request[]
 }
 
 model TeamMember {
@@ -99,4 +102,29 @@ model SoloEntry {
   hackathon   Hackathon @relation(fields: [hackathonId], references: [id])
 
   @@unique([userId, hackathonId])
+}
+
+enum RequestType {
+  JOIN
+  INVITE
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Request {
+  id        Int           @id @default(autoincrement())
+  type      RequestType
+  status    RequestStatus @default(PENDING)
+  message   String?
+  createdAt DateTime      @default(now())
+  teamId    Int
+  team      Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User          @relation("RequestAbout", fields: [userId], references: [id])
+  senderId  Int
+  sender    User          @relation("RequestSender", fields: [senderId], references: [id])
 }

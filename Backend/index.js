@@ -9,6 +9,7 @@ app.use("/api/hackathons", require("./routes/hackathons"));
 app.use("/api/teams", require("./routes/teams"));
 app.use("/api/solo", require("./routes/solo"));
 app.use("/api/matches", require("./routes/matches"));
+app.use("/api/requests", require("./routes/requests"));
 
 app.get("/", (req, res) => {
   res.send("Hackathon Team Matcher API is running");
