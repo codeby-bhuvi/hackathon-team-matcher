@@ -103,4 +103,59 @@ router.get("/", requireAuth, async (req, res) => {
   res.json(teams);
 });
 
+router.get("/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: "Invalid team id" });
+  }
+
+  const team = await prisma.team.findUnique({
+    where: { id },
+    include: {
+      hackathon: { select: { id: true, name: true, hidden: true } },
+      leader: { select: { id: true, name: true } },
+      members: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              city: true,
+              college: true,
+              skills: true,
+              contact: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!team || (team.hackathon.hidden && req.user.role !== "ADMIN")) {
+    return res.status(404).json({ error: "Team not found" });
+  }
+
+  const isMember = team.members.some((m) => m.userId === req.user.id);
+
+  const members = team.members.map((m) => {
+    const { contact, ...publicInfo } = m.user;
+    return {
+      id: m.id,
+      joinedAt: m.joinedAt,
+      user: isMember ? { ...publicInfo, contact } : publicInfo,
+    };
+  });
+
+  res.json({
+    id: team.id,
+    name: team.name,
+    skillsNeeded: team.skillsNeeded,
+    spotsNeeded: team.spotsNeeded,
+    hackathon: { id: team.hackathon.id, name: team.hackathon.name },
+    leader: team.leader,
+    members,
+    isMember,
+  });
+});
+
 module.exports = router;
