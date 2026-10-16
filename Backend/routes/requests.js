@@ -132,4 +132,100 @@ router.get("/", requireAuth, async (req, res) => {
   res.json({ received, sent });
 });
 
+router.patch("/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  const { action } = req.body;
+
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: "Invalid request id" });
+  }
+  if (!["ACCEPT", "DECLINE"].includes(action)) {
+    return res.status(400).json({ error: "Action must be ACCEPT or DECLINE" });
+  }
+
+  const request = await prisma.request.findUnique({
+    where: { id },
+    include: { team: true },
+  });
+  if (!request) {
+    return res.status(404).json({ error: "Request not found" });
+  }
+
+  const responderId =
+    request.type === "JOIN" ? request.team.leaderId : request.userId;
+  if (responderId !== req.user.id) {
+    return res
+      .status(403)
+      .json({ error: "Only the person who received this request can answer it" });
+  }
+  if (request.status !== "PENDING") {
+    return res.status(409).json({ error: "This request was already answered" });
+  }
+
+  if (action === "DECLINE") {
+    const declined = await prisma.request.update({
+      where: { id },
+      data: { status: "DECLINED" },
+    });
+    return res.json(declined);
+  }
+
+  const alreadyOnTeam = await prisma.teamMember.findUnique({
+    where: {
+      userId_hackathonId: {
+        userId: request.userId,
+        hackathonId: request.team.hackathonId,
+      },
+    },
+  });
+  if (alreadyOnTeam) {
+    return res.status(409).json({
+      error: "That person has already joined a team for this hackathon",
+    });
+  }
+
+  try {
+    const accepted = await prisma.$transaction(async (tx) => {
+      const spot = await tx.team.updateMany({
+        where: { id: request.teamId, spotsNeeded: { gt: 0 } },
+        data: { spotsNeeded: { decrement: 1 } },
+      });
+      if (spot.count === 0) {
+        throw new Error("TEAM_FULL");
+      }
+
+      await tx.teamMember.create({
+        data: {
+          teamId: request.teamId,
+          userId: request.userId,
+          hackathonId: request.team.hackathonId,
+        },
+      });
+
+      await tx.soloEntry.deleteMany({
+        where: {
+          userId: request.userId,
+          hackathonId: request.team.hackathonId,
+        },
+      });
+
+      return tx.request.update({
+        where: { id },
+        data: { status: "ACCEPTED" },
+        include: {
+          team: { select: { id: true, name: true, spotsNeeded: true } },
+          user: { select: { id: true, name: true } },
+        },
+      });
+    });
+
+    res.json(accepted);
+  } catch (err) {
+    if (err.message === "TEAM_FULL") {
+      return res.status(409).json({ error: "This team is already full" });
+    }
+    throw err;
+  }
+});
+
 module.exports = router;
