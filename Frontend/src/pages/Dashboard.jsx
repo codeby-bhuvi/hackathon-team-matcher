@@ -33,6 +33,7 @@ function Dashboard() {
       <p>Skills: {user.skills.join(", ") || "none added yet"}</p>
       <button onClick={logout}>Log out</button>
       <p><Link to="/hackathons">Browse hackathons</Link></p>
+            <p><Link to="/requests">Requests</Link></p>
     </div>
   );
 }
