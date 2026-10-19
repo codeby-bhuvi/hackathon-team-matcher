@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api.js";
 
+const MODE_LABELS = {
+  ONLINE: "Online",
+  IN_PERSON: "In person",
+  HYBRID: "Hybrid",
+};
+
 function Hackathons() {
   const navigate = useNavigate();
   const [hackathons, setHackathons] = useState([]);
@@ -46,36 +52,59 @@ function Hackathons() {
 
   return (
     <div>
-      <h2>Hackathons</h2>
-            <p><Link to="/hackathons/new">Post a hackathon</Link></p>
+      <div className="page-head">
+        <h2>Hackathons</h2>
+        <Link to="/hackathons/new" className="btn-link">
+          + Post a hackathon
+        </Link>
+      </div>
 
-      <form onSubmit={handleSearch}>
-        <input placeholder="Search by name" value={q} onChange={(e) => setQ(e.target.value)} />
-        <input placeholder="City" value={city} onChange={(e) => setCity(e.target.value)} />
+      <form onSubmit={handleSearch} className="search-bar">
+        <input
+          placeholder="Search by name"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        <input
+          placeholder="City"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        />
         <button type="submit">Search</button>
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
-      {loading && <p>Loading...</p>}
-      {!loading && !error && hackathons.length === 0 && <p>No hackathons found.</p>}
+      {loading && <p className="muted">Loading...</p>}
+      {!loading && !error && hackathons.length === 0 && (
+        <p className="muted">No hackathons found.</p>
+      )}
 
       {hackathons.map((h) => (
-        <div key={h.id} style={{ border: "1px solid #ccc", padding: 8, margin: "8px 0" }}>
-                    <h3>
-            <Link to={`/hackathons/${h.id}`}>{h.name}</Link>
-          </h3>
-          <p>
-            By {h.organizer} · {h.mode.replace("_", " ")}
-            {h.city ? ` · ${h.city}` : ""}
-          </p>
+        <div key={h.id} className="hack-card">
+          <div className="hack-top">
+            <h3>
+              <Link to={`/hackathons/${h.id}`}>{h.name}</Link>
+            </h3>
+            <span className={`badge badge-${h.mode.toLowerCase()}`}>
+              {MODE_LABELS[h.mode]}
+              {h.city ? ` · ${h.city}` : ""}
+            </span>
+          </div>
+
+          <p className="muted">By {h.organizer}</p>
           <p>
             {new Date(h.startDate).toLocaleDateString()} to{" "}
-            {new Date(h.endDate).toLocaleDateString()} · Register by{" "}
-            {new Date(h.deadline).toLocaleDateString()}
+            {new Date(h.endDate).toLocaleDateString()}
           </p>
           <p>
-            Team size: {h.minTeamSize} to {h.maxTeamSize} · Posted by {h.postedBy.name}
+            Register by <strong>{new Date(h.deadline).toLocaleDateString()}</strong>{" "}
+            · Teams of {h.minTeamSize} to {h.maxTeamSize}
           </p>
+          <p className="muted">Posted by {h.postedBy.name}</p>
+
+          <Link to={`/hackathons/${h.id}`} className="btn-link">
+            View details
+          </Link>
         </div>
       ))}
     </div>
