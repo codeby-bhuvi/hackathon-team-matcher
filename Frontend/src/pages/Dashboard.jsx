@@ -34,6 +34,7 @@ function Dashboard() {
       <button onClick={logout}>Log out</button>
       <p><Link to="/hackathons">Browse hackathons</Link></p>
             <p><Link to="/requests">Requests</Link></p>
+                  <p><Link to="/my-profile">Edit my profile</Link></p>
     </div>
   );
 }

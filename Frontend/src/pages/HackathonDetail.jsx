@@ -16,7 +16,9 @@ function getCurrentUser() {
     return null;
   }
 }
-
+function NameLink({ user }) {
+  return <Link to={`/profile/${user.id}`}>{user.name}</Link>;
+}
 function HackathonDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -177,7 +179,9 @@ function HackathonDetail() {
           Official page
         </a>
       </p>
-      <p>Posted by {hackathon.postedBy.name}</p>
+            <p>
+        Posted by <NameLink user={hackathon.postedBy} />
+      </p>
 
       <hr />
 
@@ -193,7 +197,9 @@ function HackathonDetail() {
               <h4>
                 {team.name} · match score {team.score}
               </h4>
-              <p>Led by {team.leader.name}</p>
+              <p>
+  Led by <NameLink user={team.leader} />
+</p>
               <p>
                 Skills you have that they need:{" "}
                 {team.matchedSkills.join(", ") || "none"}
@@ -209,8 +215,8 @@ function HackathonDetail() {
           <h3>Best people for {myTeam.name}</h3>
           {matchedPeople.map((entry) => (
             <div key={entry.id} style={cardStyle}>
-              <h4>
-                {entry.user.name} · match score {entry.score}
+                            <h4>
+                <NameLink user={entry.user} /> · match score {entry.score}
               </h4>
               <p>
                 {entry.user.city} · {entry.user.college}
@@ -235,8 +241,18 @@ function HackathonDetail() {
       {teams.map((team) => (
         <div key={team.id} style={cardStyle}>
           <h4>{team.name}</h4>
-          <p>Led by {team.leader.name}</p>
-          <p>Members: {team.members.map((m) => m.user.name).join(", ")}</p>
+          <p>
+  Led by <NameLink user={team.leader} />
+</p>
+                    <p>
+            Members:{" "}
+            {team.members.map((m, i) => (
+              <span key={m.id}>
+                {i > 0 && ", "}
+                <NameLink user={m.user} />
+              </span>
+            ))}
+          </p>
           <p>
             Needs {team.spotsNeeded} more · Skills wanted:{" "}
             {team.skillsNeeded.join(", ") || "any"}
@@ -266,7 +282,9 @@ function HackathonDetail() {
 
       {soloEntries.map((entry) => (
         <div key={entry.id} style={cardStyle}>
-          <h4>{entry.user.name}</h4>
+                    <h4>
+            <NameLink user={entry.user} />
+          </h4>
           <p>
             {entry.user.city} · {entry.user.college}
           </p>
