@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api.js";
 
 function Dashboard() {
@@ -32,6 +32,7 @@ function Dashboard() {
       </p>
       <p>Skills: {user.skills.join(", ") || "none added yet"}</p>
       <button onClick={logout}>Log out</button>
+      <p><Link to="/hackathons">Browse hackathons</Link></p>
     </div>
   );
 }
