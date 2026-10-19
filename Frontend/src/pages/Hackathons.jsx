@@ -61,7 +61,9 @@ function Hackathons() {
 
       {hackathons.map((h) => (
         <div key={h.id} style={{ border: "1px solid #ccc", padding: 8, margin: "8px 0" }}>
-          <h3>{h.name}</h3>
+                    <h3>
+            <Link to={`/hackathons/${h.id}`}>{h.name}</Link>
+          </h3>
           <p>
             By {h.organizer} · {h.mode.replace("_", " ")}
             {h.city ? ` · ${h.city}` : ""}

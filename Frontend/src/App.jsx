@@ -4,6 +4,8 @@ import Signup from "./pages/Signup.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Hackathons from "./pages/Hackathons.jsx";
 import PostHackathon from "./pages/PostHackathon.jsx";
+import HackathonDetail from "./pages/HackathonDetail.jsx";
+import CreateTeam from "./pages/CreateTeam.jsx";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/hackathons" element={<Hackathons />} />
          <Route path="/hackathons/new" element={<PostHackathon />} />
+                 <Route path="/hackathons/:id" element={<HackathonDetail />} />
+                         <Route path="/hackathons/:id/team/new" element={<CreateTeam />} />
       </Routes>
     </div>
   );
