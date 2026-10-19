@@ -44,7 +44,7 @@ function Signup() {
   }
 
   return (
-    <div>
+        <div className="auth-card">
       <h2>Create your account</h2>
       <form onSubmit={handleSubmit}>
         <input name="name" placeholder="Full name" value={form.name} onChange={handleChange} />

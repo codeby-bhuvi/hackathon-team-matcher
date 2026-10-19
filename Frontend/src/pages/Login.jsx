@@ -34,7 +34,7 @@ function Login() {
   }
 
   return (
-    <div>
+        <div className="auth-card">
       <h2>Log in</h2>
       <form onSubmit={handleSubmit}>
         <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} />
