@@ -35,6 +35,7 @@ function Dashboard() {
       <p><Link to="/hackathons">Browse hackathons</Link></p>
             <p><Link to="/requests">Requests</Link></p>
                   <p><Link to="/my-profile">Edit my profile</Link></p>
+                        {user.role === "ADMIN" && <p><Link to="/admin">Admin: hidden posts</Link></p>}
     </div>
   );
 }

@@ -37,6 +37,8 @@ function HackathonDetail() {
   const [teamMessage, setTeamMessage] = useState("");
   const [soloError, setSoloError] = useState("");
   const [soloMessage, setSoloMessage] = useState("");
+    const [reportError, setReportError] = useState("");
+  const [reportMessage, setReportMessage] = useState("");
 
   const goToLogin = useCallback(() => {
     localStorage.removeItem("token");
@@ -136,6 +138,27 @@ function HackathonDetail() {
       setSoloError(err.message);
     }
   }
+    async function reportPost() {
+    setReportError("");
+    setReportMessage("");
+
+    const reason = window.prompt("Why are you reporting this post? (optional)");
+    if (reason === null) return;
+
+    try {
+      await api(`/api/hackathons/${id}/report`, {
+        method: "POST",
+        body: { reason },
+      });
+      setReportMessage("Thanks, your report was received.");
+    } catch (err) {
+      if (isAuthError(err)) {
+        goToLogin();
+        return;
+      }
+      setReportError(err.message);
+    }
+  }
 
   if (error) {
     return (
@@ -182,6 +205,13 @@ function HackathonDetail() {
             <p>
         Posted by <NameLink user={hackathon.postedBy} />
       </p>
+            {currentUser && currentUser.id !== hackathon.postedBy.id && (
+        <p>
+          <button onClick={reportPost}>Report this post</button>
+        </p>
+      )}
+      {reportError && <p style={{ color: "red" }}>{reportError}</p>}
+      {reportMessage && <p style={{ color: "green" }}>{reportMessage}</p>}
 
       <hr />
 
