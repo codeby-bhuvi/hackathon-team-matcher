@@ -1,280 +1,639 @@
+@import url("https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap");
+
+/* ==========================================================
+   HACKATHON TEAM MATCHER
+   MEMPHIS DESIGN • CREATIVE TECH FESTIVAL • RESPONSIVE
+   ========================================================== */
+
 :root {
-  --bg: #f4f6fb;
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --border: #e3e7ef;
-  --accent: #2563eb;
-  --accent-dark: #1d4ed8;
+  --ink: #171717;
+  --panel: #fffdf5;
+  --white: #ffffff;
+  --pink: #ff65c3;
+  --teal: #7bcac6;
+  --yellow: #ffca55;
+  --blue: #7082bc;
+  --purple: #a993ff;
+  --lime: #d9fa62;
+  --accent: var(--pink);
+  --muted: #62616a;
+  --line: #171717;
+
+  --display: "Unbounded", "Hanken Grotesk", system-ui, sans-serif;
+  --font: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --border: 2px solid var(--ink);
+  --shadow: 5px 5px 0 var(--ink);
+  --shadow-lg: 8px 8px 0 var(--ink);
+  --shadow-pink: 6px 6px 0 var(--pink);
+  --shadow-blue: 6px 6px 0 var(--blue);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --transition: 160ms ease;
 }
 
-* {
+/* 1. Reset and page background */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--ink);
+  background-color: var(--panel);
+
+  background-image: radial-gradient(
+    rgba(23, 23, 23, 0.12) 1.4px,
+    transparent 1.4px
+  );
+  background-size: 22px 22px;
+
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
-  max-width: 900px;
+  width: 100%;
+  max-width: 1240px;
+  min-height: 100vh;
   margin: 0 auto;
-  padding: 16px 20px 48px;
+  padding: 28px 32px 72px;
 }
+
+/* 2. Typography */
 
 h1,
 h2,
 h3,
-h4 {
-  line-height: 1.25;
-  margin: 1.2em 0 0.5em;
+h4,
+h5,
+h6 {
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+
+h1 {
+  font-size: clamp(2.8rem, 8vw, 6.5rem);
+  margin: 0.35em 0;
+  overflow-wrap: anywhere;
 }
 
 h2 {
-  font-size: 1.6rem;
-}
-
-h3 {
-  font-size: 1.2rem;
-}
-
-h4 {
-  font-size: 1.05rem;
-  margin-top: 0;
-}
-
-p {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1.08;
   margin: 0.4em 0;
 }
 
+h3 {
+  font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+  margin: 0.5em 0;
+}
+
+h4 {
+  font-family: var(--font);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 0.5em;
+}
+
+p {
+  max-width: 68ch;
+  margin: 0.6em 0;
+}
+
+small {
+  font-size: 0.85rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+strong {
+  font-weight: 800;
+}
+
+::selection {
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+/* 3. Links */
+
 a {
-  color: var(--accent);
-  text-decoration: none;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-color: var(--pink);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+  transition:
+    color var(--transition),
+    text-decoration-color var(--transition);
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--ink);
+  text-decoration-color: var(--teal);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 4px;
 }
 
 hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 24px 0;
+  border: 0;
+  border-top: 3px dotted var(--ink);
+  margin: 32px 0;
 }
 
-nav {
-  background: var(--card);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-  padding: 12px 16px !important;
+/* 4. Top bar */
+
+.topbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 4px;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 38px;
 }
 
-button {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font: inherit;
-  font-weight: 600;
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.slots {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.slots i {
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.slots i.on {
+  background: var(--teal);
+}
+
+.slots i.hot {
+  background: var(--pink);
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.top-actions .btn-link {
+  margin: 0;
+  padding: 9px 14px;
+}
+
+.quiet-link {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: var(--border);
+  border-radius: 50%;
+  background: var(--blue);
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.avatar:hover,
+.avatar.active {
+  background: var(--pink);
+  color: var(--ink);
+}
+
+.quiet {
+  margin: 0;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: var(--pink);
+  text-decoration-thickness: 3px;
+}
+
+.quiet:hover,
+.quiet:active {
+  background: transparent;
+  color: var(--ink);
+  transform: none;
+  box-shadow: none;
+}
+
+/* 5. Buttons — bold, chunky, playful */
+
+button,
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  max-width: 100%;
+  padding: 12px 20px;
+  margin: 4px 0 10px;
+
+  color: var(--ink);
+  background: var(--pink);
+  border: var(--border);
+  border-radius: 10px;
+  box-shadow: 0 5px 0 var(--ink);
+
+  font-family: var(--font);
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+
   cursor: pointer;
-  margin: 4px 0;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    background var(--transition);
 }
 
-button:hover {
-  background: var(--accent-dark);
+button:hover:not(:disabled),
+.btn-link:hover {
+  color: var(--ink);
+  background: var(--yellow);
+  text-decoration: none;
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--ink);
+}
+
+button:active:not(:disabled),
+.btn-link:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 var(--ink);
 }
 
 button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
+
+.btn-dark {
+  color: var(--white);
+  background: var(--ink);
+  box-shadow: 0 5px 0 var(--blue);
+}
+
+.btn-dark:hover:not(:disabled) {
+  color: var(--ink);
+  background: var(--teal);
+}
+
+.btn-light {
+  color: var(--ink);
+  background: var(--white);
+}
+
+.btn-secondary {
+  color: var(--ink);
+  background: var(--teal);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--yellow);
+}
+
+/* 6. Form fields */
 
 input,
 select,
 textarea {
+  width: min(100%, 380px);
+  min-height: 46px;
+  margin: 5px 6px 5px 0;
+  padding: 11px 14px;
+
+  color: var(--ink);
+  background: var(--white);
+  border: var(--border);
+  border-radius: 10px;
+
   font: inherit;
-  color: inherit;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
-  margin: 4px 4px 4px 0;
-  width: min(100%, 340px);
+  transition:
+    box-shadow var(--transition),
+    background var(--transition);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #77757a;
+  opacity: 1;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
+  outline: none;
+  background: #fff9df;
+  box-shadow: 4px 4px 0 var(--teal);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  min-height: auto;
+  accent-color: var(--pink);
+}
+
+input[type="range"] {
+  padding: 0;
 }
 
 textarea {
-  width: min(100%, 460px);
+  width: min(100%, 520px);
+  min-height: 125px;
+  resize: vertical;
 }
 
 label {
   display: inline-block;
-  margin: 4px 0;
+  margin: 6px 0;
+  color: var(--ink);
+  font-size: 0.93rem;
+  font-weight: 800;
 }
 
-/* The cards on each page use inline borders, so these rules override them. */
+/* 7. Generic bordered cards */
+
+.tile,
+.hack-card,
+.auth-card {
+  color: var(--ink);
+  background: var(--white);
+  border: var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.tile,
+.hack-card {
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.tile:hover,
+.hack-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Keep inline-styled team/person cards on theme */
 div[style*="border"] {
-  background: var(--card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 12px !important;
-  padding: 16px !important;
-  margin: 12px 0 !important;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  background-color: var(--white);
+  border-color: var(--ink);
+  border-radius: 18px;
 }
 
-@media (max-width: 600px) {
-  #root {
-    padding: 12px 12px 40px;
-  }
+/* 8. Hero section */
 
-  h2 {
-    font-size: 1.35rem;
-  }
-}
-.muted {
-  color: var(--muted);
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  padding: clamp(28px, 5vw, 58px);
+  margin: 22px 0 36px;
+
+  color: var(--ink);
+  background: var(--pink);
+  border: 2px solid var(--ink);
+  border-radius: 26px;
+  box-shadow: 8px 8px 0 var(--ink);
 }
 
-.chip {
-  display: inline-block;
-  background: #e8efff;
-  color: var(--accent-dark);
-  border-radius: 999px;
-  padding: 2px 12px;
-  margin: 2px 6px 2px 0;
-  font-size: 0.9rem;
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 26px;
+  right: 30px;
+  width: 76px;
+  height: 76px;
+  border: 2px solid var(--ink);
+  background: var(--yellow);
+  transform: rotate(45deg);
+}
+
+.hero h1,
+.hero h2 {
+  max-width: 13ch;
+  margin: 0 0 20px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.hero p {
+  max-width: 48ch;
+  font-size: 1.1rem;
+}
+
+.hero-sub {
+  max-width: 42ch;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
+.hero-meta {
+  font-weight: 800;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.hero-actions button,
+.hero-actions .btn-link {
+  min-height: 50px;
+}
+
+/* 9. Team slots */
+
+.slots-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 26px 0 22px;
+}
+
+.slot {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border: var(--border);
+  border-radius: 50%;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.slot-you {
+  color: var(--white);
+  background: var(--ink);
+}
+
+.slot-empty {
+  border: 2px dashed var(--ink);
+  background: transparent;
+  font-size: 1.7rem;
+  font-weight: 500;
+}
+
+/* 10. Dashboard tiles and grid */
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 250px), 1fr)
+  );
+  gap: 22px;
   margin-top: 24px;
 }
 
 .tile {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px;
-  color: var(--text);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-  transition: transform 0.15s, box-shadow 0.15s;
+  gap: 10px;
+  min-height: 170px;
+  padding: 24px;
+
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.tile:nth-child(4n + 1) {
+  background: var(--yellow);
+}
+
+.tile:nth-child(4n + 2) {
+  background: var(--teal);
+}
+
+.tile:nth-child(4n + 3) {
+  background: var(--pink);
+}
+
+.tile:nth-child(4n + 4) {
+  background: var(--white);
 }
 
 .tile:hover {
-  text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1);
+  color: var(--ink);
+  background: var(--white);
 }
 
 .tile strong {
-  color: var(--accent-dark);
-  font-size: 1.05rem;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.25;
 }
 
 .tile span {
-  color: var(--muted);
+  color: var(--ink);
   font-size: 0.95rem;
-}
-.auth-card {
-  max-width: 420px;
-  margin: 32px auto;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px 28px;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
-}
-
-.auth-card h2 {
-  margin-top: 0;
-  text-align: center;
-}
-
-.auth-card input {
-  width: 100%;
-  margin: 6px 0;
-}
-
-.auth-card button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-}
-
-.auth-card br {
-  display: none;
-}
-
-.auth-card p {
-  text-align: center;
-}
-.page-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.btn-link {
-  display: inline-block;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 8px;
-  padding: 8px 14px;
   font-weight: 600;
 }
 
-.btn-link:hover {
-  background: var(--accent-dark);
-  color: #fff;
-  text-decoration: none;
+.tile:hover span {
+  color: var(--muted);
 }
 
-.search-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 12px 0 20px;
-}
-
-.search-bar input {
-  margin: 0;
-  flex: 1 1 180px;
-}
-
-.search-bar button {
-  margin: 0;
-}
+/* 11. Hackathon cards */
 
 .hack-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin: 14px 0;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  padding: 24px;
+  margin: 18px 0;
+}
+
+.hack-card:nth-of-type(3n + 1) {
+  box-shadow: 6px 6px 0 var(--pink);
+}
+
+.hack-card:nth-of-type(3n + 2) {
+  box-shadow: 6px 6px 0 var(--teal);
+}
+
+.hack-card:nth-of-type(3n + 3) {
+  box-shadow: 6px 6px 0 var(--yellow);
+}
+
+.hack-card h2,
+.hack-card h3 {
+  margin-top: 0;
+}
+
+.hack-card p {
+  line-height: 1.75;
 }
 
 .hack-top {
@@ -282,33 +641,429 @@ div[style*="border"] {
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .hack-top h3 {
   margin: 0;
 }
 
-.badge {
+.hack-top h3::before {
+  content: "";
   display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  vertical-align: 0.04em;
+  background: var(--pink);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.hack-top h3 a {
+  text-decoration: none;
+}
+
+.hack-top h3 a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--pink);
+}
+
+/* 12. Page headings */
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.page-head h1,
+.page-head h2,
+.page-head h3 {
+  margin: 0.3em 0;
+}
+
+/* 13. Search bar */
+
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 26px;
+  padding: 16px;
+
+  background: var(--white);
+  border: var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.search-bar input {
+  flex: 1 1 200px;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.search-bar select {
+  flex: 0 1 190px;
+  width: auto;
+  margin: 0;
+}
+
+.search-bar button {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+/* 14. Labels, badges and chips */
+
+.badge,
+.chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+
+  color: var(--ink);
+  background: var(--white);
+  border: 2px solid var(--ink);
   border-radius: 999px;
-  padding: 2px 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
+
+  font-weight: 800;
   white-space: nowrap;
 }
 
+.badge {
+  padding: 4px 12px;
+  font-size: 0.82rem;
+}
+
+.chip {
+  padding: 5px 13px;
+  margin: 3px 6px 3px 0;
+  font-size: 0.9rem;
+}
+
 .badge-in_person {
-  background: #e8efff;
-  color: #1d4ed8;
+  background: var(--yellow);
 }
 
 .badge-online {
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--teal);
 }
 
 .badge-hybrid {
-  background: #f3e8ff;
-  color: #7e22ce;
+  background: var(--purple);
+}
+
+/* 15. Authentication */
+
+.auth-card {
+  width: min(100%, 440px);
+  margin: 30px auto;
+  padding: 32px;
+
+  border-radius: 24px;
+  box-shadow: 8px 8px 0 var(--pink);
+}
+
+.auth-card h2 {
+  margin-top: 0;
+  font-size: clamp(1.7rem, 5vw, 2.2rem);
+}
+
+.auth-card p {
+  max-width: none;
+}
+
+.auth-card input:not([type="checkbox"]):not([type="radio"]),
+.auth-card select,
+.auth-card textarea {
+  width: 100%;
+  margin: 7px 0;
+}
+
+.auth-card button {
+  width: 100%;
+  margin-top: 14px;
+  padding: 13px;
+}
+
+.auth-card br {
+  display: none;
+}
+
+/* 16. Page links row (sits under the top bar and scrolls with the page) */
+
+.dock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 0 0 36px;
+}
+
+.topbar + .dock {
+  margin-top: -18px;
+}
+
+.dock a {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 20px;
+
+  color: var(--ink);
+  background: var(--white);
+  border: var(--border);
+  border-radius: 999px;
+
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background var(--transition),
+    transform var(--transition);
+}
+
+.dock a:hover {
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+.dock a.active {
+  color: var(--ink);
+  background: var(--pink);
+  box-shadow: 0 3px 0 var(--ink);
+}
+
+/* 17. Tables */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--ink);
+  background: var(--white);
+  border: var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 13px 16px;
+  border-bottom: 1px solid #dedbd2;
+}
+
+th {
+  background: var(--yellow);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tbody tr:hover {
+  background: #fff5d6;
+}
+
+/* 18. Media and code */
+
+img,
+video,
+svg {
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+pre,
+code {
+  overflow-wrap: anywhere;
+}
+
+/* 19. Tablet */
+
+@media (max-width: 800px) {
+  #root {
+    padding: 22px 22px 64px;
+  }
+
+  .hero {
+    padding: 34px 28px;
+  }
+
+  .hero::after {
+    width: 48px;
+    height: 48px;
+    top: 24px;
+    right: 22px;
+  }
+
+  .hack-card {
+    padding: 20px;
+  }
+
+  .search-bar {
+    align-items: stretch;
+  }
+}
+
+/* 20. Mobile */
+
+@media (max-width: 560px) {
+  body {
+    font-size: 15px;
+  }
+
+  #root {
+    padding: 16px 14px 56px;
+  }
+
+  .brand {
+    font-size: 0.82rem;
+  }
+
+  .topbar {
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .topbar + .dock {
+    margin-top: -6px;
+  }
+
+  .dock {
+    gap: 8px;
+    margin-bottom: 26px;
+  }
+
+  .dock a {
+    padding: 8px 14px;
+    font-size: 0.84rem;
+  }
+
+  h1 {
+    font-size: clamp(2.35rem, 12vw, 4rem);
+  }
+
+  h2 {
+    font-size: clamp(1.8rem, 8vw, 2.7rem);
+  }
+
+  .hero {
+    padding: 28px 20px;
+    border-radius: 20px;
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .hero::after {
+    width: 34px;
+    height: 34px;
+    top: 18px;
+    right: 16px;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .hero-actions button,
+  .hero-actions .btn-link {
+    width: 100%;
+  }
+
+  .slots-row {
+    gap: 9px;
+  }
+
+  .slot {
+    width: 52px;
+    height: 52px;
+    font-size: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .tile {
+    min-height: 140px;
+    padding: 20px;
+  }
+
+  .hack-card {
+    padding: 17px;
+  }
+
+  .hack-top {
+    flex-direction: column;
+  }
+
+  .page-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .auth-card {
+    padding: 24px 19px;
+    box-shadow: 6px 6px 0 var(--pink);
+  }
+
+  .search-bar {
+    padding: 11px;
+  }
+
+  .search-bar input,
+  .search-bar select,
+  .search-bar button {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  th,
+  td {
+    padding: 9px 8px;
+    font-size: 0.84rem;
+  }
+}
+
+/* 21. Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  button:hover,
+  button:active,
+  .btn-link:hover,
+  .btn-link:active,
+  .tile:hover,
+  .hack-card:hover {
+    transform: none !important;
+  }
 }
