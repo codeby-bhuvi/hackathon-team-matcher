@@ -1,8 +1,7 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 function NavBar() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const token = localStorage.getItem("token");
   let user = null;
@@ -12,6 +11,16 @@ function NavBar() {
     user = null;
   }
 
+  const initials =
+    user && user.name
+      ? user.name
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0].toUpperCase())
+          .join("")
+      : "?";
+
   function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -19,38 +28,54 @@ function NavBar() {
   }
 
   return (
-    <nav
-      key={location.pathname}
-      style={{ padding: "8px 0", borderBottom: "1px solid #ccc", marginBottom: 16 }}
-    >
-      <strong>Hackathon Team Matcher</strong>
-      {" | "}
-      {token ? (
-        <>
-          <Link to="/dashboard">Dashboard</Link>
-          {" | "}
-          <Link to="/hackathons">Hackathons</Link>
-          {" | "}
-          <Link to="/requests">Requests</Link>
-          {" | "}
-          <Link to="/my-profile">My profile</Link>
-          {user && user.role === "ADMIN" && (
+    <>
+      <header className="topbar">
+        <Link to={token ? "/dashboard" : "/login"} className="brand">
+          <span className="slots" aria-hidden="true">
+            <i className="on" />
+            <i className="hot" />
+            <i />
+          </span>
+          Hackathon Team Matcher
+        </Link>
+
+        <div className="top-actions">
+          {token ? (
             <>
-              {" | "}
-              <Link to="/admin">Admin</Link>
+              <NavLink
+                to="/my-profile"
+                className="avatar"
+                title="My profile"
+                aria-label="My profile"
+              >
+                {initials}
+              </NavLink>
+              <button type="button" className="quiet" onClick={logout}>
+                Log out
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" className="quiet-link">
+                Log in
+              </NavLink>
+              <NavLink to="/signup" className="btn-link">
+                Sign up
+              </NavLink>
             </>
           )}
-          {" | "}
-          <button onClick={logout}>Log out</button>
-        </>
-      ) : (
-        <>
-          <Link to="/login">Login</Link>
-          {" | "}
-          <Link to="/signup">Sign up</Link>
-        </>
+        </div>
+      </header>
+
+      {token && (
+        <nav className="dock" aria-label="Main">
+          <NavLink to="/dashboard">Dashboard</NavLink>
+          <NavLink to="/hackathons">Hackathons</NavLink>
+          <NavLink to="/requests">Requests</NavLink>
+          {user && user.role === "ADMIN" && <NavLink to="/admin">Admin</NavLink>}
+        </nav>
       )}
-    </nav>
+    </>
   );
 }
 

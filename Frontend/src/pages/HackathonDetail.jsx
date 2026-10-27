@@ -16,6 +16,11 @@ function getCurrentUser() {
     return null;
   }
 }
+const MODE_LABELS = {
+  ONLINE: "Online",
+  IN_PERSON: "In person",
+  HYBRID: "Hybrid",
+};
 function NameLink({ user }) {
   return <Link to={`/profile/${user.id}`}>{user.name}</Link>;
 }
@@ -183,28 +188,35 @@ function HackathonDetail() {
         <Link to="/hackathons">Back to hackathons</Link>
       </p>
 
-      <h2>{hackathon.name}</h2>
-      <p>
-        By {hackathon.organizer} · {hackathon.mode.replace("_", " ")}
-        {hackathon.city ? ` · ${hackathon.city}` : ""}
-      </p>
-      <p>
-        {new Date(hackathon.startDate).toLocaleDateString()} to{" "}
-        {new Date(hackathon.endDate).toLocaleDateString()}
-      </p>
-      <p>Register by {new Date(hackathon.deadline).toLocaleDateString()}</p>
-      <p>
-        Team size: {hackathon.minTeamSize} to {hackathon.maxTeamSize}
-      </p>
-      {hackathon.description && <p>{hackathon.description}</p>}
-      <p>
-        <a href={hackathon.link} target="_blank" rel="noreferrer">
-          Official page
-        </a>
-      </p>
-            <p>
-        Posted by <NameLink user={hackathon.postedBy} />
-      </p>
+            <div className="hack-card">
+        <div className="hack-top">
+          <h2 style={{ margin: 0 }}>{hackathon.name}</h2>
+          <span className={`badge badge-${hackathon.mode.toLowerCase()}`}>
+            {MODE_LABELS[hackathon.mode]}
+            {hackathon.city ? ` · ${hackathon.city}` : ""}
+          </span>
+        </div>
+
+        <p className="muted">By {hackathon.organizer}</p>
+        <p>
+          {new Date(hackathon.startDate).toLocaleDateString()} to{" "}
+          {new Date(hackathon.endDate).toLocaleDateString()}
+        </p>
+        <p>
+          Register by{" "}
+          <strong>{new Date(hackathon.deadline).toLocaleDateString()}</strong> ·
+          Teams of {hackathon.minTeamSize} to {hackathon.maxTeamSize}
+        </p>
+        {hackathon.description && <p>{hackathon.description}</p>}
+        <p>
+          <a href={hackathon.link} target="_blank" rel="noreferrer">
+            Official page ↗
+          </a>
+        </p>
+        <p className="muted">
+          Posted by <NameLink user={hackathon.postedBy} />
+        </p>
+      </div>
             {currentUser && currentUser.id !== hackathon.postedBy.id && (
         <p>
           <button onClick={reportPost}>Report this post</button>
