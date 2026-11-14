@@ -4,11 +4,35 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
+// Allowed origins:
+//   - CLIENT_URL env var (your production Vercel URL, set in Render)
+//   - Any Vercel preview deployment for this project
+//   - localhost for local dev
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+];
+if (process.env.CLIENT_URL) {
+  ALLOWED_ORIGINS.push(process.env.CLIENT_URL);
+}
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL
-      ? [process.env.CLIENT_URL, "http://localhost:5173", "http://localhost:3000"]
-      : "*",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, Render health checks)
+      if (!origin) return callback(null, true);
+
+      // Allow any exact match in the allow-list
+      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+
+      // Allow all Vercel preview URLs for this project
+      // e.g. hackathon-team-matcher-*.vercel.app
+      if (/^https:\/\/hackathon-team-matcher[^.]*\.vercel\.app$/.test(origin)) {
+        return callback(null, true);
+      }
+
+      callback(new Error("CORS: origin not allowed: " + origin));
+    },
     credentials: true,
   })
 );
