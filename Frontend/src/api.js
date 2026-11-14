@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Strip trailing slash so paths like /api/... never become //api/...
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/+$/, "");
 
 export async function api(path, { method = "GET", body } = {}) {
   const token = localStorage.getItem("token");
