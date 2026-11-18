@@ -50,6 +50,11 @@ app.get("/", (req, res) => {
   res.send("Hackathon Team Matcher API is running");
 });
 
+// Notes endpoint (returns empty list — no notes feature in this app)
+app.get("/api/notes", (req, res) => {
+  res.json([]);
+});
+
 // Health check endpoint for Render
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok" });
